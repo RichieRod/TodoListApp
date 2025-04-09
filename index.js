@@ -31,38 +31,39 @@ let db = new sqlite3.Database('./base.sqlite3', (err) => {
     });
 });
 
-//Creamos un endpoint de login que recibe los datos como json
-app.post('/insert', jsonParser, function (req, res) {
-    //Imprimimos el contenido del campo todo
+//Creamos un endpoint POST que guarda los datos en SQLite
+app.post('/agrega_todo', jsonParser, function (req, res) {
     const { todo } = req.body;
-   
-    console.log(todo);
-    res.setHeader('Content-Type', 'application/json');
-    
 
     if (!todo) {
-        res.status(400).send('Falta información necesaria');
+        res.status(400).json({ error: 'Falta información necesaria: "todo"' });
         return;
     }
-    const stmt  =  db.prepare('INSERT INTO todos (todo, created_at) VALUES (?, CURRENT_TIMESTAMP)');
 
-    stmt.run(todo, (err) => {
+    // Obtenemos el timestamp actual en formato Unix
+    const createdAt = Math.floor(Date.now() / 1000);
+
+    // Preparamos el INSERT
+    const stmt = db.prepare('INSERT INTO todos (todo, created_at) VALUES (?, ?)');
+
+    stmt.run(todo, createdAt, function (err) {
         if (err) {
-          console.error("Error running stmt:", err);
-          res.status(500).send(err);
-          return;
-
-        } else {
-          console.log("Insert was successful!");
+            console.error('Error al insertar:', err.message);
+            res.status(500).json({ error: 'Error en el servidor' });
+            return;
         }
+
+        console.log('Todo insertado con ID:', this.lastID);
+
+        res.status(201).json({
+            message: 'Todo agregado correctamente',
+            id: this.lastID,
+            timestamp: createdAt
+        });
     });
 
     stmt.finalize();
-    
-    //Enviamos de regreso la respuesta
-    res.setHeader('Content-Type', 'application/json');
-    res.status(201).send();
-})
+});
 
 
 
@@ -89,3 +90,5 @@ const port = 3000;
 app.listen(port, () => {
     console.log(`Aplicación corriendo en http://localhost:${port}`)
 })
+
+
