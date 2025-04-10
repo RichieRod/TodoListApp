@@ -36,27 +36,24 @@ app.post('/agrega_todo', jsonParser, function (req, res) {
     const { todo } = req.body;
 
     if (!todo) {
-        return res.status(400).json({ error: 'Falta información necesaria' });
+        res.status(400).json({ error: 'Falta el campo todo' });
+        return;
     }
 
-    const createdAt = Math.floor(Date.now() / 1000); // Unix timestamp en segundos
+    const createdAt = Math.floor(Date.now() / 1000); // Timestamp en segundos
 
     const stmt = db.prepare('INSERT INTO todos (todo, created_at) VALUES (?, ?)');
-
     stmt.run(todo, createdAt, function (err) {
         if (err) {
-            console.error("Error al insertar:", err.message);
-            return res.status(500).json({ error: 'Error al insertar en la base de datos' });
+            console.error("Error al insertar:", err);
+            res.status(500).json({ error: 'Error al insertar en la base de datos' });
+            return;
         }
 
-        console.log("Insert exitoso:", todo);
-        return res.status(201).json({
-            message: 'Todo agregado exitosamente',
-            todo: {
-                id: this.lastID,
-                todo: todo,
-                created_at: createdAt
-            }
+        res.status(201).json({
+            mensaje: 'Tarea agregada correctamente',
+            id: this.lastID,
+            timestamp: createdAt
         });
     });
 
