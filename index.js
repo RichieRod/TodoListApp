@@ -86,4 +86,19 @@ app.listen(port, () => {
     console.log(`Aplicación corriendo en http://localhost:${port}`)
 })
 
+// Endpoint GET para listar todos los todos
+app.get('/lista_todos', (req, res) => {
+    const sql = 'SELECT * FROM todos ORDER BY id DESC';
+
+    db.all(sql, [], (err, rows) => {
+        if (err) {
+            console.error('Error al consultar la base de datos:', err.message);
+            return res.status(500).json({ error: 'Error al obtener las tareas' });
+        }
+
+        res.status(200).json({ todos: rows });
+    });
+});
+
+
 
