@@ -100,5 +100,10 @@ app.get('/lista_todos', (req, res) => {
     });
 });
 
+// Endpoint GET para verificar que /agrega_todo responde 
+app.get('/agrega_todo', (req, res) => {
+    res.status(200).json({ mensaje: 'Endpoint GET activo. Usa POST para agregar tareas.' });
+});
+
 
 
