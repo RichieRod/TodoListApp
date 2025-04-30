@@ -86,7 +86,7 @@ app.listen(port, () => {
     console.log(`Aplicación corriendo en http://localhost:${port}`)
 })
 
-// Endpoint GET para listar todos los todos
+// Endpoint GET para listar todos los SELECT*
 app.get('/lista_todos', (req, res) => {
     const sql = 'SELECT * FROM todos ORDER BY id DESC';
 
