@@ -1,0 +1,10 @@
+{
+  "expo": {
+    "splash": {
+      "image": "./assets/kapybara.jpeg",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff",
+      "imageResizeMode": "contain"
+    }
+  }
+}
